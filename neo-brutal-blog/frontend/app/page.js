@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-// ✅ Make sure you have NEXT_PUBLIC_API_BASE_URL in your .env
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
 
 export default function Home() {
   const [posts, setPosts] = useState([])
@@ -17,9 +16,9 @@ export default function Home() {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/posts`) // <-- FIXED
+      const response = await fetch(`${API_URL}/posts`)
       const data = await response.json()
-
+      
       if (data.success) {
         setPosts(data.data)
       } else {
@@ -38,10 +37,10 @@ export default function Home() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/posts/${id}`, {
+      const response = await fetch(`${API_URL}/posts/${id}`, {
         method: 'DELETE',
       })
-
+      
       if (response.ok) {
         setPosts(posts.filter(post => post.id !== id))
       } else {
@@ -77,9 +76,9 @@ export default function Home() {
       )}
 
       <div className="flex justify-between align-center mb-3">
-        <h1 style={{
-          fontSize: '2.5rem',
-          fontWeight: 'bold',
+        <h1 style={{ 
+          fontSize: '2.5rem', 
+          fontWeight: 'bold', 
           color: 'var(--secondary)',
           textShadow: '2px 2px 0px var(--accent)'
         }}>
@@ -111,8 +110,8 @@ export default function Home() {
               )}
             </div>
             <div className="card-content">
-              {post.content.length > 200
-                ? `${post.content.substring(0, 200)}...`
+              {post.content.length > 200 
+                ? `${post.content.substring(0, 200)}...` 
                 : post.content
               }
             </div>
@@ -123,8 +122,8 @@ export default function Home() {
               <Link href={`/edit/${post.id}`} className="btn btn-accent">
                 EDIT
               </Link>
-              <button
-                onClick={() => handleDelete(post.id)}
+              <button 
+                onClick={() => handleDelete(post.id)} 
                 className="btn btn-danger"
               >
                 DELETE
