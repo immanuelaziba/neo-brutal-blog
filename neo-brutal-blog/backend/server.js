@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// In-memory storage (will be replaced with database in future versions)
+// In-memory storage (temporary — replace with DB later)
 let posts = [
   {
     id: '1',
@@ -20,7 +20,7 @@ let posts = [
     updatedAt: new Date('2024-01-01').toISOString()
   },
   {
-    id: '2', 
+    id: '2',
     title: 'Building with Purpose',
     content: 'Every line of code should serve a purpose. No fluff, no unnecessary complexity. Just pure functionality wrapped in bold design.',
     author: 'Developer',
@@ -29,9 +29,9 @@ let posts = [
   }
 ];
 
-// Routes
+// ROUTES =========
 
-// GET /api/posts - Get all posts
+// GET all posts
 app.get('/api/posts', (req, res) => {
   res.json({
     success: true,
@@ -39,35 +39,21 @@ app.get('/api/posts', (req, res) => {
   });
 });
 
-// GET /api/posts/:id - Get single post
+// GET one post
 app.get('/api/posts/:id', (req, res) => {
-  const { id } = req.params;
-  const post = posts.find(p => p.id === id);
-  
+  const post = posts.find(p => p.id === req.params.id);
   if (!post) {
-    return res.status(404).json({
-      success: false,
-      message: 'Post not found'
-    });
+    return res.status(404).json({ success: false, message: 'Post not found' });
   }
-  
-  res.json({
-    success: true,
-    data: post
-  });
+  res.json({ success: true, data: post });
 });
 
-// POST /api/posts - Create new post
+// CREATE new post
 app.post('/api/posts', (req, res) => {
   const { title, content, author } = req.body;
-  
   if (!title || !content) {
-    return res.status(400).json({
-      success: false,
-      message: 'Title and content are required'
-    });
+    return res.status(400).json({ success: false, message: 'Title and content are required' });
   }
-  
   const newPost = {
     id: uuidv4(),
     title,
@@ -76,79 +62,49 @@ app.post('/api/posts', (req, res) => {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  
   posts.push(newPost);
-  
-  res.status(201).json({
-    success: true,
-    data: newPost
-  });
+  res.status(201).json({ success: true, data: newPost });
 });
 
-// PUT /api/posts/:id - Update post
+// UPDATE post
 app.put('/api/posts/:id', (req, res) => {
   const { id } = req.params;
   const { title, content, author } = req.body;
-  
-  const postIndex = posts.findIndex(p => p.id === id);
-  
-  if (postIndex === -1) {
-    return res.status(404).json({
-      success: false,
-      message: 'Post not found'
-    });
+  const idx = posts.findIndex(p => p.id === id);
+
+  if (idx === -1) {
+    return res.status(404).json({ success: false, message: 'Post not found' });
   }
-  
   if (!title || !content) {
-    return res.status(400).json({
-      success: false,
-      message: 'Title and content are required'
-    });
+    return res.status(400).json({ success: false, message: 'Title and content are required' });
   }
-  
-  posts[postIndex] = {
-    ...posts[postIndex],
+
+  posts[idx] = {
+    ...posts[idx],
     title,
     content,
-    author: author || posts[postIndex].author,
+    author: author || posts[idx].author,
     updatedAt: new Date().toISOString()
   };
-  
-  res.json({
-    success: true,
-    data: posts[postIndex]
-  });
+  res.json({ success: true, data: posts[idx] });
 });
 
-// DELETE /api/posts/:id - Delete post
+// DELETE post
 app.delete('/api/posts/:id', (req, res) => {
-  const { id } = req.params;
-  const postIndex = posts.findIndex(p => p.id === id);
-  
-  if (postIndex === -1) {
-    return res.status(404).json({
-      success: false,
-      message: 'Post not found'
-    });
+  const idx = posts.findIndex(p => p.id === req.params.id);
+  if (idx === -1) {
+    return res.status(404).json({ success: false, message: 'Post not found' });
   }
-  
-  const deletedPost = posts.splice(postIndex, 1)[0];
-  
-  res.json({
-    success: true,
-    data: deletedPost
-  });
+  const deleted = posts.splice(idx, 1)[0];
+  res.json({ success: true, data: deleted });
 });
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Blog API v1.0 is running',
-    timestamp: new Date().toISOString()
-  });
+  res.json({ success: true, message: 'Blog API v1.0 is running', timestamp: new Date().toISOString() });
 });
 
+// Start server
 app.listen(PORT, () => {
   console.log(`🚀 Blog API v1.0 server running on port ${PORT}`);
 });
