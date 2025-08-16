@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
+// read from .env.local → NEXT_PUBLIC_API_URL=your-backend-url
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Home() {
@@ -16,7 +17,7 @@ export default function Home() {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`${API_URL}/posts`)
+      const response = await fetch(`${API_URL}/api/posts`) // <-- include /api
       const data = await response.json()
       
       if (data.success) {
@@ -37,7 +38,7 @@ export default function Home() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/posts/${id}`, {
+      const response = await fetch(`${API_URL}/api/posts/${id}`, {
         method: 'DELETE',
       })
       
