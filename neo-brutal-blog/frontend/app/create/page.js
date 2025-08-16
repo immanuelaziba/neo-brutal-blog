@@ -4,74 +4,63 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+// Read from .env.local
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export default function CreatePost() {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
     author: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
-  const router = useRouter()
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const router = useRouter();
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-  }
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!formData.title.trim() || !formData.content.trim()) {
-      setError('Title and content are required')
-      return
+      setError('Title and content are required');
+      return;
     }
 
-    setLoading(true)
-    setError('')
-    setSuccess('')
+    setLoading(true);
+    setError('');
+    setSuccess('');
 
     try {
-      const response = await fetch(`${API_URL}/posts`, {
+      const response = await fetch(`${API_URL}/api/posts`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.success) {
-        setSuccess('Post created successfully!')
-        setTimeout(() => {
-          router.push('/')
-        }, 1500)
+        setSuccess('Post created successfully!');
+        setTimeout(() => router.push('/'), 1500);
       } else {
-        setError(data.message || 'Failed to create post')
+        setError(data.message || 'Failed to create post');
       }
     } catch (err) {
-      setError('Failed to connect to server')
+      setError('Failed to connect to server');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="container">
       <div className="flex justify-between align-center mb-3">
-        <h1 style={{ 
-          fontSize: '2.5rem', 
-          fontWeight: 'bold', 
-          color: 'var(--secondary)',
-          textShadow: '2px 2px 0px var(--accent)'
-        }}>
+        <h1 style={{ fontSize:'2.5rem', fontWeight:'bold', color:'var(--secondary)', textShadow:'2px 2px 0px var(--accent)' }}>
           CREATE POST
         </h1>
         <Link href="/" className="btn btn-secondary">
@@ -79,23 +68,12 @@ export default function CreatePost() {
         </Link>
       </div>
 
-      {error && (
-        <div className="error">
-          ERROR: {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="success">
-          SUCCESS: {success}
-        </div>
-      )}
+      {error && <div className="error">ERROR: {error}</div>}
+      {success && <div className="success">SUCCESS: {success}</div>}
 
       <form onSubmit={handleSubmit} className="form">
         <div className="form-group">
-          <label htmlFor="title" className="form-label">
-            POST TITLE
-          </label>
+          <label htmlFor="title" className="form-label">POST TITLE</label>
           <input
             type="text"
             id="title"
@@ -109,9 +87,7 @@ export default function CreatePost() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="author" className="form-label">
-            AUTHOR NAME (OPTIONAL)
-          </label>
+          <label htmlFor="author" className="form-label">AUTHOR NAME (OPTIONAL)</label>
           <input
             type="text"
             id="author"
@@ -125,9 +101,7 @@ export default function CreatePost() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="content" className="form-label">
-            POST CONTENT
-          </label>
+          <label htmlFor="content" className="form-label">POST CONTENT</label>
           <textarea
             id="content"
             name="content"
@@ -141,18 +115,12 @@ export default function CreatePost() {
         </div>
 
         <div className="flex gap-2">
-          <button 
-            type="submit" 
-            className="btn btn-primary"
-            disabled={loading}
-          >
+          <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? 'CREATING...' : 'CREATE POST'}
           </button>
-          <Link href="/" className="btn btn-secondary">
-            CANCEL
-          </Link>
+          <Link href="/" className="btn btn-secondary">CANCEL</Link>
         </div>
       </form>
     </div>
-  )
+  );
 }
