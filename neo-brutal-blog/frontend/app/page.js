@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;   // Next.js
+REACT_APP_API_BASE_URL=https://neo-brutal-blog-production.up.railway.app
 
 export default function Home() {
   const [posts, setPosts] = useState([])
